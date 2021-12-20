@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shop.Data;
-using Shop.Models;
-using Shop.Models.ViewModels;
-using Shop.Utility;
+using Shop_Models;
+using Shop_Models.ViewModels;
+using Shop_Utility;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

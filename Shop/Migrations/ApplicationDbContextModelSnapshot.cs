@@ -225,7 +225,7 @@ namespace Shop.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Shop.Models.ApplicationType", b =>
+            modelBuilder.Entity("Shop_Models.ApplicationType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,7 +241,7 @@ namespace Shop.Migrations
                     b.ToTable("ApplicationType");
                 });
 
-            modelBuilder.Entity("Shop.Models.Category", b =>
+            modelBuilder.Entity("Shop_Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,7 +260,7 @@ namespace Shop.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("Shop.Models.Product", b =>
+            modelBuilder.Entity("Shop_Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -298,7 +298,7 @@ namespace Shop.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("Shop.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Shop_Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
@@ -359,15 +359,15 @@ namespace Shop.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Shop.Models.Product", b =>
+            modelBuilder.Entity("Shop_Models.Product", b =>
                 {
-                    b.HasOne("Shop.Models.ApplicationType", "ApplicationType")
+                    b.HasOne("Shop_Models.ApplicationType", "ApplicationType")
                         .WithMany()
                         .HasForeignKey("ApplicationTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Shop.Models.Category", "Category")
+                    b.HasOne("Shop_Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)

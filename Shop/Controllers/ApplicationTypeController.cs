@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Data;
-using Shop.Models;
+using Shop_Models;
+using Shop_Utility;
 using System.Collections.Generic;
 using System.IO;
 

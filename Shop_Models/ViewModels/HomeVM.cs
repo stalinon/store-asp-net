@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Shop.Models.ViewModels
+namespace Shop_Models.ViewModels
 {
     public class HomeVM
     {

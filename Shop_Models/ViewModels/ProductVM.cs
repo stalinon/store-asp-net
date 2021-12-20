@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
-namespace Shop.Models.ViewModels
+namespace Shop_Models.ViewModels
 {
     /// <summary>
     ///     ViewModel для класса продукта

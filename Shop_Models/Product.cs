@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Shop.Models
+namespace Shop_Models
 {
     /// <summary>
     ///     Класс, описывающий продукт

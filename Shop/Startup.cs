@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Shop.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Shop.Utility;
+using Shop_Utility;
 
 namespace Shop
 {
