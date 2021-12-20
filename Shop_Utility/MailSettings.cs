@@ -1,4 +1,4 @@
-﻿namespace Shop.Utility
+﻿namespace Shop_Utility
 {
     public class MailSettings
     {

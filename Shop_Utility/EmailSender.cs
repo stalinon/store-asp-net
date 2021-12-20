@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace Shop.Utility
+namespace Shop_Utility
 {
     public class EmailSender : IEmailSender
     {
