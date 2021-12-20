@@ -7,6 +7,7 @@ using Shop.Data;
 using Shop.Models;
 using Shop.Models.ViewModels;
 using Shop.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -111,8 +112,16 @@ namespace Shop.Controllers
                                                       stringBuilder.ToString());
 
             var MailSettings = _configuration.GetSection("Credentials").GetSection("Email").Get<MailSettings>();
+            try
+            {
+                await _emailSender.SendEmailAsync(ProductUserVM.ApplicationUser.Email, subject, messageBody);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                RedirectToAction(nameof(Index));
+            }
             await _emailSender.SendEmailAsync(MailSettings.Login, subject, messageBody);
-
             HttpContext.Session.Clear();
             Thread.Sleep(1500);
             return RedirectToAction(nameof(Index));
