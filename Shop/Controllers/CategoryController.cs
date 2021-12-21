@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Shop.Data;
+using Shop_DataAccess.Data;
 using Shop_Models;
 using Shop_Utility;
 using System.Collections.Generic;

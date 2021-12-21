@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Shop.Data;
+using Shop_DataAccess.Data;
 
-namespace Shop.Migrations
+namespace Shop_DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20211216120850_AddApplicationTypeToProduct")]

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shop_Models;
 
-namespace Shop.Data
+namespace Shop_DataAccess.Data
 {
     /// <summary>
     ///     Контекст базы данных

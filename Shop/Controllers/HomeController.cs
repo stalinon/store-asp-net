@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Shop.Data;
+using Shop_DataAccess.Data;
 using Shop_Models;
 using Shop_Models.ViewModels;
 using Shop_Utility;

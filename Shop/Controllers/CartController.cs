@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Shop.Data;
+using Shop_DataAccess.Data;
 using Shop_Models;
 using Shop_Models.ViewModels;
 using Shop_Utility;

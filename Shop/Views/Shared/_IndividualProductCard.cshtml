@@ -7,9 +7,9 @@
                 <div class="card-body px-3 pt-3 pb-1 row">
                     <div class="col-7"><label class="float-left" style="height:50px">
                         
-                        @if(Model.Name.Length > 30)
+                        @if(Model.Name.Length > 25)
                             {
-                                var str = Model.Name.Substring(0, 30) + "...";
+                                var str = Model.Name.Substring(0, 25) + "...";
                                 @str;
                             }
                             else
@@ -19,7 +19,7 @@
                     </label></div>
                     <div class="col-5"><label class="float-right"><span class="text-info h6">@Model.Price.ToString("c")</span></label> </div>
                 </div>
-                <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@WC.ImagePath@Model.Image" alt="Card image cap" height="300">
+                <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@WC.ImagePath@Model.Image" alt="Card image cap" style="height:400px;">
                 <div class="card-body p-1 px-3 row">
                     <div class="col-6">
                         <span class="badge p-2 border w-100" style="background-color:lavenderblush">
@@ -47,17 +47,9 @@
                             }
                     </span>
                 </div>
-                <div class="col-12 pt-2" style="font-size:13px; text-align:justify; height:70px" >
+                <div class="col-12 pt-2" style="font-size:13px; text-align:justify; height:100px;" >
                     <p> 
-                        @if(Model.ShortDesc.Length > 70)
-                            {
-                                var str = Model.ShortDesc.Substring(0, 70) + "...";
-                                @str;
-                            }
-                            else
-                            {
-                                @Model.ShortDesc;
-                            }
+                        @Model.ShortDesc
                     </p>
                 </div>
                 <div class="col-12 p-1">
