@@ -22,7 +22,7 @@
                 <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@WC.ImagePath@Model.Image" alt="Card image cap" style="height:400px;">
                 <div class="card-body p-1 px-3 row">
                     <div class="col-6">
-                        <span class="badge p-2 border w-100" style="background-color:lavenderblush">
+                        <span class="badge p-2 border w-100 text-dark" style="background-color:lavenderblush">
                             @if(Model.Category.Name.Length > 15)
                             {
                                 var str = Model.Category.Name.Substring(0, 15) + "...";
@@ -35,7 +35,7 @@
                         </span>
                     </div>
                 <div class="col-6 border-0">
-                    <span class="badge p-2 border w-100" style="background-color:aliceblue">
+                    <span class="badge p-2 border w-100  text-dark" style="background-color:aliceblue">
                         @if(Model.ApplicationType.Name.Length > 15)
                             {
                                 var str = Model.ApplicationType.Name.Substring(0, 15) + "...";
