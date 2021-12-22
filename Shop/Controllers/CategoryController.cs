@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Shop_DataAccess.Data;
+using Shop_DataAccess.Repository.IRepository;
 using Shop_Models;
 using Shop_Utility;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Shop.Controllers
 {
@@ -13,19 +11,17 @@ namespace Shop.Controllers
     public class CategoryController : Controller
     {
 
-        private readonly ApplicationDbContext _db;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ICategoryRepository _catRepo;
 
 
-        public CategoryController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public CategoryController(ICategoryRepository catRepo)
         {
-            _db = db;
-            _webHostEnvironment = webHostEnvironment;
+            _catRepo = catRepo;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Category> objList = _db.Category;
+            var objList = _catRepo.GetAll();
             return View(objList);
         }
 
@@ -42,8 +38,8 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Category.Add(obj);
-                _db.SaveChanges();
+                _catRepo.Add(obj);
+                _catRepo.Save();
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -54,7 +50,7 @@ namespace Shop.Controllers
         {
             if (id == null || id < 1)
                 return NotFound();
-            var obj = _db.Category.Find(id);
+            var obj = _catRepo.Find(id.GetValueOrDefault());
             if (obj == null)
                 return NotFound();
             return View(obj);
@@ -67,8 +63,8 @@ namespace Shop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Category.Update(obj);
-                _db.SaveChanges();
+                _catRepo.Update(obj);
+                _catRepo.Save();
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -79,7 +75,7 @@ namespace Shop.Controllers
         {
             if (id == null || id < 1)
                 return NotFound();
-            var obj = _db.Category.Find(id);
+            var obj = _catRepo.Find(id.GetValueOrDefault());
             if (obj == null)
                 return NotFound();
             return View(obj);
@@ -90,29 +86,11 @@ namespace Shop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Category.Find(id);
+            var obj = _catRepo.Find(id.GetValueOrDefault());
             if (obj != null)
             {
-                foreach (var prod in _db.Product)
-                {
-                    if (prod != null && prod.CategoryId == id)
-                    {
-                        string webRootPath = _webHostEnvironment.WebRootPath;
-                        string upload = webRootPath + WC.ImagePath;
-
-                        var file = Path.Combine(upload, prod.Image);
-
-                        if (System.IO.File.Exists(file))
-                        {
-                            System.IO.File.Delete(file);
-                        }
-
-                        _db.Product.Remove(prod);
-                        _db.SaveChanges();
-                    }
-                }
-                _db.Category.Remove(obj);
-                _db.SaveChanges();
+                _catRepo.Remove(obj);
+                _catRepo.Save();
                 return RedirectToAction("Index");
             }
             return NotFound();

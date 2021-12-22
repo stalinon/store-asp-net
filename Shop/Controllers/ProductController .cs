@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Shop_DataAccess.Data;
+using Shop_DataAccess.Repository.IRepository;
 using Shop_Models;
 using Shop_Models.ViewModels;
 using Shop_Utility;
@@ -18,19 +19,19 @@ namespace Shop.Controllers
     public class ProductController : Controller
     {
 
-        private readonly ApplicationDbContext _db;
+        private readonly IProductRepository _prodRepo;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IProductRepository prodRepo, IWebHostEnvironment webHostEnvironment)
         {
-            _db = db;
+            _prodRepo = prodRepo;
             _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Product> objList = _db.Product.Include(u => u.Category).Include(u => u.ApplicationType);
+            IEnumerable<Product> objList = _prodRepo.GetAll(includeProperties: "Category,ApplicationType");
 
             //foreach (var obj in objList)
             //{
@@ -65,12 +66,12 @@ namespace Shop.Controllers
 
                     productVM.Product.Image = fileName + extension;
 
-                    _db.Product.Add(productVM.Product);
+                    _prodRepo.Add(productVM.Product);
                 }
                 else
                 {
                     //update
-                    var objFromDb = _db.Product.AsNoTracking().FirstOrDefault(u => u.Id == productVM.Product.Id);
+                    var objFromDb = _prodRepo.FirstOrDefault(filter: u => u.Id == productVM.Product.Id, isTracking: false);
 
                     if (files.Count > 0)
                     {
@@ -97,21 +98,13 @@ namespace Shop.Controllers
                         productVM.Product.Image = objFromDb.Image;
                     }
 
-                    _db.Product.Update(productVM.Product);
+                    _prodRepo.Update(productVM.Product);
                 }
-                _db.SaveChanges();
+                _prodRepo.Save();
                 return RedirectToAction("Index");
             }
-            productVM.CategorySelectList = _db.Category.Select(u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
-            productVM.ApplicationTypeSelectList = _db.ApplicationType.Select(u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
+            productVM.CategorySelectList = _prodRepo.GetSelectListItems(WC.CategoryName);
+            productVM.ApplicationTypeSelectList = _prodRepo.GetSelectListItems(WC.ApplicationTypeName);
             return View(productVM);
         }
 
@@ -131,16 +124,8 @@ namespace Shop.Controllers
             var productVM = new ProductVM()
             {
                 Product = new Product(),
-                CategorySelectList = _db.Category.Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                }),
-                ApplicationTypeSelectList = _db.ApplicationType.Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                })
+                CategorySelectList = _prodRepo.GetSelectListItems(WC.CategoryName),
+                ApplicationTypeSelectList = _prodRepo.GetSelectListItems(WC.ApplicationTypeName)
             };
 
             if (id == null)
@@ -150,7 +135,7 @@ namespace Shop.Controllers
             }
             else
             {
-                productVM.Product = _db.Product.Find(id);
+                productVM.Product = _prodRepo.Find(id.GetValueOrDefault());
                 if (productVM.Product == null)
                 {
                     return NotFound();
@@ -165,7 +150,7 @@ namespace Shop.Controllers
             if (id == null || id < 1)
                 return NotFound();
             //var obj = _db.Product.Find(id);
-            var obj = _db.Product.Include(u=>u.Category).Include(u=>u.ApplicationType).FirstOrDefault(u=>u.Id==id);
+            var obj = _prodRepo.FirstOrDefault(filter: u=>u.Id==id, includeProperties: "Category,ApplicationType");
             if (obj == null)
                 return NotFound();
             return View(obj);
@@ -176,7 +161,7 @@ namespace Shop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Product.Find(id);
+            var obj = _prodRepo.Find(id.GetValueOrDefault());
 
             if (obj != null)
             {
@@ -190,8 +175,8 @@ namespace Shop.Controllers
                     System.IO.File.Delete(file);
                 }
 
-                _db.Product.Remove(obj);
-                _db.SaveChanges();
+                _prodRepo.Remove(obj);
+                _prodRepo.Save();
                 return RedirectToAction("Index");
             }
             return NotFound();

@@ -8,6 +8,8 @@ using Shop_DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Shop_Utility;
+using Shop_DataAccess.Repository.IRepository;
+using Shop_DataAccess.Repository;
 
 namespace Shop
 {
@@ -42,6 +44,10 @@ namespace Shop
 
             //  добавление функционала отправки сообщений на email
             services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IApplicationTypeRepository, ApplicationTypeRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddControllersWithViews();
         }
