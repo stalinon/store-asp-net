@@ -45,9 +45,14 @@ namespace Shop
             //  добавление функционала отправки сообщений на email
             services.AddTransient<IEmailSender, EmailSender>();
 
+            //  добавление репозиториев
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IApplicationTypeRepository, ApplicationTypeRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IInquiryHeaderRepository, InquiryHeaderRepository>();
+            services.AddScoped<IInquiryDetailRepository, InquiryDetailRepository>();
+            services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
 
             services.AddControllersWithViews();
         }

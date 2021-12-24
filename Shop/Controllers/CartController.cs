@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shop_DataAccess.Data;
+using Shop_DataAccess.Repository.IRepository;
 using Shop_Models;
 using Shop_Models.ViewModels;
 using Shop_Utility;
@@ -21,7 +22,13 @@ namespace Shop.Controllers
     [Authorize]
     public class CartController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IProductRepository _prodRepo;
+
+        private readonly IApplicationUserRepository _userRepo;
+
+        private readonly IInquiryHeaderRepository _inquiryHeaderRepo;
+
+        private readonly IInquiryDetailRepository _inquiryDetailRepo;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -33,12 +40,18 @@ namespace Shop.Controllers
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
 
-        public CartController(ApplicationDbContext db, 
+        public CartController(IProductRepository prodRepo,
+                              IInquiryDetailRepository inquiryDetailRepo,
+                              IInquiryHeaderRepository inquiryHeaderRepo,
+                              IApplicationUserRepository userRepo,
                               IWebHostEnvironment webHostEnvironment,
                               IEmailSender emailSender,
                               IConfiguration configuration)
         {
-            _db = db;
+            _inquiryDetailRepo = inquiryDetailRepo;
+            _inquiryHeaderRepo = inquiryHeaderRepo;
+            _userRepo = userRepo;
+            _prodRepo = prodRepo;
             _webHostEnvironment = webHostEnvironment;
             _emailSender = emailSender;
             _configuration = configuration;
@@ -50,7 +63,7 @@ namespace Shop.Controllers
 
             var prodInCart = shoppingCartList.Select(i => i.ProductId).ToList();
 
-            var productList = _db.Product.Where(u => prodInCart.Contains(u.Id)).ToList();
+            var productList = _prodRepo.GetAll(filter: u => prodInCart.Contains(u.Id)).ToList();
 
             return View(productList);
         }
@@ -76,8 +89,8 @@ namespace Shop.Controllers
 
             ProductUserVM = new ProductUserVM()
             {
-                ApplicationUser = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId),
-                ProductList = _db.Product.Where(u => prodInCart.Contains(u.Id)).ToList(),
+                ApplicationUser = _userRepo.FirstOrDefault(u => u.Id == userId),
+                ProductList = _prodRepo.GetAll(filter: u => prodInCart.Contains(u.Id)).ToList(),
             };
 
             return View(ProductUserVM);
@@ -88,6 +101,8 @@ namespace Shop.Controllers
         [ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(ProductUserVM ProductUserVM)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var PathTotemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
                 + "templates" + Path.DirectorySeparatorChar.ToString() + "inquiry.html";
 
@@ -110,6 +125,28 @@ namespace Shop.Controllers
                                                       ProductUserVM.ApplicationUser.Email,
                                                       ProductUserVM.ApplicationUser.PhoneNumber,
                                                       stringBuilder.ToString());
+
+            var inquiryHeader = new InquiryHeader()
+            {
+                ApplicationUserId = userId,
+                FullName = ProductUserVM.ApplicationUser.FullName,
+                Email = ProductUserVM.ApplicationUser.Email,
+                PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
+                IquiryDate = DateTime.Now,
+            };
+            _inquiryHeaderRepo.Add(inquiryHeader);
+            _inquiryHeaderRepo.Save();
+
+            foreach (var prod in ProductUserVM.ProductList)
+            {
+                var inquiryDetail = new InquiryDetail()
+                {
+                    InquiryHeader = inquiryHeader,
+                    ProductId = prod.Id,
+                };
+                _inquiryDetailRepo.Add(inquiryDetail);
+            }
+            _inquiryDetailRepo.Save();
 
             var MailSettings = _configuration.GetSection("Credentials").GetSection("Email").Get<MailSettings>();
             try

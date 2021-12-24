@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shop_DataAccess.Data;
+using Shop_DataAccess.Repository.IRepository;
 using Shop_Models;
 using Shop_Models.ViewModels;
 using Shop_Utility;
@@ -15,20 +16,23 @@ namespace Shop.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        private readonly ApplicationDbContext _db;
+        private readonly IProductRepository _prodRepo;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+        private readonly ICategoryRepository _categoryRepo;
+
+        public HomeController(ILogger<HomeController> logger, IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             _logger = logger;
-            _db = db;
+            _prodRepo = productRepository;
+            _categoryRepo = categoryRepository;
         }
 
         public IActionResult Index()
         {
             var homeVM = new HomeVM()
             {
-                Products = _db.Product.Include(u => u.Category).Include(u => u.ApplicationType),
-                Categories = _db.Category
+                Products = _prodRepo.GetAll(includeProperties: "Category,ApplicationType"),
+                Categories = _categoryRepo.GetAll()
             };
             return View(homeVM);
         }
@@ -43,8 +47,7 @@ namespace Shop.Controllers
             }
             var DetailsVM = new DetailsVM()
             {
-                Product = _db.Product.Include(u => u.Category).Include(u => u.ApplicationType)
-                                     .Where(u => u.Id == id).FirstOrDefault(),
+                Product = _prodRepo.FirstOrDefault(includeProperties: "Category,ApplicationType", filter: u => u.Id == id),
                 ExistInCart = shoppingCartList.Select(u => u.ProductId).Contains(id)
             };
             return View(DetailsVM);
